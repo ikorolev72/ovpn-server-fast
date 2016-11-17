@@ -4,6 +4,7 @@
 
 
 export LISTEN_PORT=1194
+export PROTOCOL="tcp"
 export VPN_NET=10.8.0.0
 export VPN_MASK=255.255.255.0
 
@@ -37,6 +38,9 @@ export KEY_ORG="Fort-Funston"
 export KEY_EMAIL="me@myhost.mydomain"
 export KEY_OU="MyOrganizationalUnit"
 export KEY_NAME="EasyRSA"
+
+
+export ENABLE_FORWARDING=1
 
 export PROXY_CONF=/usr/local/etc/3proxy/3proxy.cfg
 

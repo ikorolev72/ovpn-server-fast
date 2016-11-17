@@ -26,7 +26,7 @@ cat <<EOF_CLIENT_CONF > $CLIENT_CONF
 ############ $CLIENT_CONF
 client
 dev tun
-proto tcp
+proto $PROTOCOL
 remote $INTERFACE_IP $LISTEN_PORT
 remote-cert-tls server
 verb 3

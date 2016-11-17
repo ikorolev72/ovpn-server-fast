@@ -1,7 +1,7 @@
 #   openvpn server/client config generator for Debian 8/Ubuntu
 
 ##  What is it?
-Script for install openvpn generate config files.
+Script for install openvpn and generate config files.
 
 ##  The Latest Version
 

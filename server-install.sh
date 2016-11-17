@@ -49,7 +49,7 @@ cat <<EOF > $SERVER_CONF
 ############# server.conf
 daemon
 port $LISTEN_PORT
-proto tcp
+proto $PROTOCOL
 dev tun
 server  $VPN_NET $VPN_MASK
 client-config-dir $STATICCLIENT_DIR
@@ -101,10 +101,34 @@ echo '</<dh>' >> $SERVER_CONF
 ####################################
 ####################################
 
-systemctl daemon-reload
 
+
+if [ "x$ENABLE_FORWARDING" == "x1" ]; then
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	echo '#' >> /etc/sysctl.conf
+	echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+	ufw allow ssh
+	ufw allow $LISTEN_PORT/$PROTOCOL
+	cp /etc/ufw/ufw.conf /etc/ufw/ufw.conf.orig
+	cat /etc/ufw/ufw.conf.orig |grep -v DEFAULT_FORWARD_POLICY > /etc/ufw/ufw.conf 
+	echo "# for openvpn server" >> /etc/ufw/ufw.conf
+	echo DEFAULT_FORWARD_POLICY="ACCEPT" >> /etc/ufw/ufw.conf
+
+	cp /etc/ufw/before.rules /etc/ufw/before.rules.orig
+	cat /etc/ufw/before.rules.orig |grep -v COMMIT > /etc/ufw/before.rules
+	echo "*nat" >> /etc/ufw/before.rules
+	echo ":POSTROUTING ACCEPT [0:0]" >> /etc/ufw/before.rules
+	echo "-A POSTROUTING -s $VPN_NET/$VPN_MASK -o $INTERFACE -j MASQUERADE" >> /etc/ufw/before.rules
+	echo "COMMIT" >> /etc/ufw/before.rules	
+fi
+
+systemctl daemon-reload
 echo "##################################################"
-echo "You can start openvpn server with command:"
-echo "service openvpn start"
+echo "# Please check the the firewall rules in /etc/ufw/ufw.conf and /etc/ufw/before.rule before start ufw"
+echo "# You can start openvpn server with commands:"
+echo "# ufw enable"
+echo "# service openvpn start"
+echo "##################################################"
+
 
 exit 0
