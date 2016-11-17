@@ -103,7 +103,7 @@ echo '</<dh>' >> $SERVER_CONF
 
 
 
-if [ "x$ENABLE_FORWARDING" == "x1" ]; then
+if [ "x$ENABLE_FORWARDING" = "x1" ]; then
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	echo '#' >> /etc/sysctl.conf
 	echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
@@ -120,13 +120,15 @@ if [ "x$ENABLE_FORWARDING" == "x1" ]; then
 	echo ":POSTROUTING ACCEPT [0:0]" >> /etc/ufw/before.rules
 	echo "-A POSTROUTING -s $VPN_NET/$VPN_MASK -o $INTERFACE -j MASQUERADE" >> /etc/ufw/before.rules
 	echo "COMMIT" >> /etc/ufw/before.rules	
+	
+	echo "# Please check the the firewall rules in /etc/ufw/ufw.conf and /etc/ufw/before.rule before start ufw"
+	echo "# You can start firewall with command:"
+	echo "# ufw enable"
 fi
 
 systemctl daemon-reload
 echo "##################################################"
-echo "# Please check the the firewall rules in /etc/ufw/ufw.conf and /etc/ufw/before.rule before start ufw"
 echo "# You can start openvpn server with commands:"
-echo "# ufw enable"
 echo "# service openvpn start"
 echo "##################################################"
 
