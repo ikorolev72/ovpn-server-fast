@@ -66,6 +66,8 @@ status $LOG_DIR/openvpn-status.log
 log $LOG_DIR/openvpn.log
 log-append $LOG_DIR/openvpn.log
 verb 3
+#duplicate-cn
+#client-to-client
 #
 EOF
 
@@ -105,25 +107,15 @@ echo '</<dh>' >> $SERVER_CONF
 
 if [ "x$ENABLE_FORWARDING" = "x1" ]; then
 	echo 1 > /proc/sys/net/ipv4/ip_forward
-	echo '#' >> /etc/sysctl.conf
-	echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
-	ufw allow ssh
-	ufw allow $LISTEN_PORT/$PROTOCOL
-	cp /etc/ufw/ufw.conf /etc/ufw/ufw.conf.orig
-	cat /etc/ufw/ufw.conf.orig |grep -v DEFAULT_FORWARD_POLICY > /etc/ufw/ufw.conf 
-	echo "# for openvpn server" >> /etc/ufw/ufw.conf
-	echo DEFAULT_FORWARD_POLICY="ACCEPT" >> /etc/ufw/ufw.conf
-
-	cp /etc/ufw/before.rules /etc/ufw/before.rules.orig
-	cat /etc/ufw/before.rules.orig |grep -v COMMIT > /etc/ufw/before.rules
-	echo "*nat" >> /etc/ufw/before.rules
-	echo ":POSTROUTING ACCEPT [0:0]" >> /etc/ufw/before.rules
-	echo "-A POSTROUTING -s $VPN_NET/$VPN_MASK -o $INTERFACE -j MASQUERADE" >> /etc/ufw/before.rules
-	echo "COMMIT" >> /etc/ufw/before.rules	
-	
-	echo "# Please check the the firewall rules in /etc/ufw/ufw.conf and /etc/ufw/before.rule before start ufw"
-	echo "# You can start firewall with command:"
-	echo "# ufw enable"
+	sysctl -w net.ipv4.ip_forward=1
+	#echo '#' >> /etc/sysctl.conf
+	#echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+	iptables -t nat -A POSTROUTING -s $VPN_NET/$VPN_MASK -o $INTERFACE -j MASQUERADE
+	apt-get install -y iptables-persistent
+	service iptables-persistent start 2>/dev/null
+	service iptables-persistent save 2>/dev/null
+	service netfilter-persistent start 2>/dev/null
+	service netfilter-persistent save 2>/dev/null
 fi
 
 systemctl daemon-reload

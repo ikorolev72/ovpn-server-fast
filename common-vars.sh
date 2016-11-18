@@ -12,7 +12,7 @@ INTERFACE=eth0
 export INTERFACE_IP=`/sbin/ifconfig $INTERFACE 2>/dev/null | /usr/bin/awk '/inet addr:/ {print $2}' | /bin/sed 's/addr://'`
 # REMOTE_IP - ip of vpn server
 export REMOTE_IP=` echo $VPN_NET | sed -e "s/[0-9]*$/1/" `
-export MAIN_DIR=/opt/ovpn-server
+export MAIN_DIR=/opt/ovpn-server-fast
 export LOG_DIR=/etc/openvpn/log
 
 export SERVER_CONF=/etc/openvpn/server.conf
