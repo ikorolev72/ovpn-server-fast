@@ -2,6 +2,9 @@
 
 # set enviroment variables
 
+BASENAME=`basename $0`
+cd `dirname $0`
+export MAIN_DIR=`pwd`
 
 export LISTEN_PORT=1194
 export PROTOCOL="tcp"
@@ -12,7 +15,6 @@ INTERFACE=eth0
 export INTERFACE_IP=`/sbin/ifconfig $INTERFACE 2>/dev/null | /usr/bin/awk '/inet addr:/ {print $2}' | /bin/sed 's/addr://'`
 # REMOTE_IP - ip of vpn server
 export REMOTE_IP=` echo $VPN_NET | sed -e "s/[0-9]*$/1/" `
-export MAIN_DIR=/opt/ovpn-server-fast
 export LOG_DIR=/etc/openvpn/log
 
 export SERVER_CONF=/etc/openvpn/server.conf
@@ -42,6 +44,6 @@ export KEY_NAME="EasyRSA"
 
 export ENABLE_FORWARDING=1
 
-export PROXY_CONF=/usr/local/etc/3proxy/3proxy.cfg
+#export PROXY_CONF=/usr/local/etc/3proxy/3proxy.cfg
 
 
